@@ -8,24 +8,22 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <div class="container">
-        <div class="thank-you-container">
+    <div class="frame-container">
+        <div class="thank-you-frame">
             <h1 class="thank-you-title">Merci !</h1>
-            <p class="thank-you-message">Un immense merci à tous ceux qui m'ont souhaité un joyeux anniversaire </p>
-            
-            <div class="names-wall">
-                <div class="names-scroller">
-                    {% for name in names %}
-                        <span class="name">{{ name }}</span>
-                    {% endfor %}
-                </div>
+            <p class="thank-you-message">Un immense merci à tous ceux qui m'ont souhaité un joyeux anniversaire !</p>
+            <div class="name-display-container">
+                <span id="current-name"></span>
             </div>
-
-
-            <div class="hearts-container" id="hearts"></div>
-            <div class="confetti-container" id="confetti"></div>
         </div>
     </div>
-    
+
+    <!-- Conteneur pour les éléments décoratifs -->
+    <div id="decor-container"></div>
+
+    <!-- JSON caché des noms -->
+    {{ names|json_script:"names-data" }}
+
+    <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>

@@ -1,126 +1,157 @@
-// script.js
+// Attendre que le DOM soit complètement chargé
 document.addEventListener('DOMContentLoaded', function() {
-    const heartsContainer = document.getElementById('hearts');
-    const confettiContainer = document.getElementById('confetti');
-    const photosScroller = document.getElementById('photos-scroller');
+    // Récupération des noms depuis les données Django
+    const namesDataElement = document.getElementById('names-data');
     
-    // Liste des personnes avec leurs noms + liens d'images définis manuellement
-    const people = [
-        { name: "Keren Siki", image: "keren.jpg" },
-        { name: "Thomas", image: "images/thomas.jpg" },
-        { name: "Sophie", image: "images/sophie.jpg" },
-        { name: "Jean", image: "images/jean.jpg" },
-        { name: "Claire", image: "images/claire.jpg" },
-        { name: "Pierre", image: "images/pierre.jpg" },
-        { name: "Nathalie", image: "images/nathalie.jpg" },
-        { name: "Luc", image: "images/luc.jpg" },
-        { name: "Émilie", image: "images/emilie.jpg" },
-        { name: "Antoine", image: "images/antoine.jpg" }
-        // 👉 ajoute autant de personnes que tu veux
-    ];
-    
-    // Ajouter les photos et noms au scroller
-    people.forEach(person => {
-        // Créer l'élément photo
-        const photoItem = document.createElement('div');
-        photoItem.className = 'photo-item';
-        
-        // Créer le cadre photo
-        const photoFrame = document.createElement('div');
-        photoFrame.className = 'photo-frame';
-        
-        // Créer l'image
-        const img = document.createElement('img');
-        img.src = person.image;   // <--- utilisation de ton lien
-        img.alt = person.name;
-        img.loading = "lazy";
-        
-        // Créer le label du nom
-        const nameLabel = document.createElement('div');
-        nameLabel.className = 'name-label';
-        nameLabel.textContent = person.name;
-        
-        // Assembler
-        photoFrame.appendChild(img);
-        photoItem.appendChild(photoFrame);
-        photoItem.appendChild(nameLabel);
-        photosScroller.appendChild(photoItem);
-    });
-    
-    // Créer des cœurs
-    function createHeart() {
-        const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.innerHTML = '❤️';
-        
-        // Position aléatoire
-        const randomX = Math.random() * 100;
-        heart.style.left = `${randomX}%`;
-        
-        // Taille aléatoire
-        const randomSize = 0.8 + Math.random() * 1.5;
-        heart.style.fontSize = `${randomSize}rem`;
-        
-        // Durée d'animation
-        const randomDuration = 10; // secondes
-        heart.style.animationDuration = `${randomDuration}s`;
-        
-        heartsContainer.appendChild(heart);
-        
-        // Supprimer après animation
-        setTimeout(() => {
-            heart.remove();
-        }, randomDuration * 1000);
-    }
-    
-    // Créer des confettis
-    function createConfetti() {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        
-        // Position aléatoire
-        const randomX = Math.random() * 100;
-        confetti.style.left = `${randomX}%`;
-        
-        // Couleur aléatoire
-        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd'];
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.backgroundColor = randomColor;
-        
-        // Forme aléatoire
-        if (Math.random() > 0.5) {
-            confetti.style.borderRadius = '50%';
-        } else {
-            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+    // Vérifier si l'élément existe et contient des données
+    if (namesDataElement && namesDataElement.textContent) {
+        const names = JSON.parse(namesDataElement.textContent);
+        const nameEl = document.getElementById('current-name');
+        const decorContainer = document.getElementById('decor-container');
+        let index = 0;
+
+        // Fonction pour afficher le nom suivant avec animation
+        function showNextName() {
+            // Si aucun nom n'est disponible, on arrête
+            if (names.length === 0) return;
+            
+            const nextName = names[index];
+            
+            nameEl.classList.remove('fade-in');
+            nameEl.classList.add('fade-out');
+
+            setTimeout(() => {
+                nameEl.textContent = nextName;
+                nameEl.classList.remove('fade-out');
+                nameEl.classList.add('fade-in');
+                
+                // Ajouter des confettis à chaque changement de nom
+                createConfetti();
+                
+                index = (index + 1) % names.length;
+            }, 600);
         }
-        
-        // Taille aléatoire
-        const randomSize = 5 + Math.random() * 15;
-        confetti.style.width = `${randomSize}px`;
-        confetti.style.height = `${randomSize}px`;
-        
-        // Durée d'animation
-        const randomDuration = 2 + Math.random() * 3;
-        confetti.style.animationDuration = `${randomDuration}s`;
-        
-        confettiContainer.appendChild(confetti);
-        
-        // Supprimer après animation
-        setTimeout(() => {
-            confetti.remove();
-        }, randomDuration * 1000);
-    }
-    
-    // Démarrer les animations
-    setInterval(createHeart, 300);
-    setInterval(createConfetti, 100);
-    
-    // Créer un lot initial
-    for (let i = 0; i < 20; i++) {
-        setTimeout(createHeart, i * 150);
-    }
-    
-    for (let i = 0; i < 50; i++) {
-        setTimeout(createConfetti, i * 50);
+
+        // Fonction pour créer des confettis
+        function createConfetti() {
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = getRandomColor();
+                confetti.style.setProperty('--rotation', Math.random() * 360);
+                confetti.style.animationDuration = (2 + Math.random() * 3) + 's';
+                confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                decorContainer.appendChild(confetti);
+                
+                // Supprimer après l'animation
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.remove();
+                    }
+                }, 6000);
+            }
+        }
+
+        // Fonction pour créer des ballons
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.style.left = Math.random() * 100 + 'vw';
+            balloon.style.backgroundColor = getRandomPastelColor();
+            balloon.style.setProperty('--x-end', (Math.random() * 20 - 10));
+            balloon.style.animationDuration = (15 + Math.random() * 10) + 's';
+            decorContainer.appendChild(balloon);
+            
+            // Supprimer après l'animation
+            setTimeout(() => {
+                if (balloon.parentNode) {
+                    balloon.remove();
+                }
+            }, 25000);
+        }
+
+        // Fonction pour créer des étoiles
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.width = (5 + Math.random() * 15) + 'px';
+            star.style.height = (5 + Math.random() * 15) + 'px';
+            decorContainer.appendChild(star);
+            
+            // Supprimer après un moment
+            setTimeout(() => {
+                if (star.parentNode) {
+                    star.remove();
+                }
+            }, 10000);
+        }
+
+        // Fonction pour créer des cœurs
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = Math.random() * 100 + 'vh';
+            heart.style.width = (10 + Math.random() * 20) + 'px';
+            heart.style.height = (10 + Math.random() * 20) + 'px';
+            decorContainer.appendChild(heart);
+            
+            // Supprimer après un moment
+            setTimeout(() => {
+                if (heart.parentNode) {
+                    heart.remove();
+                }
+            }, 8000);
+        }
+
+        // Fonctions utilitaires pour les couleurs
+        function getRandomColor() {
+            const colors = ['#FF4081', '#536DFE', '#FFC107', '#4CAF50', '#9C27B0', '#00BCD4'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function getRandomPastelColor() {
+            const hue = Math.floor(Math.random() * 360);
+            return `hsl(${hue}, 100%, 85%)`;
+        }
+
+        // Afficher le premier nom
+        if (names.length > 0) {
+            nameEl.textContent = names[0];
+            nameEl.classList.add('fade-in');
+            index = 1;
+            
+            // Démarrer l'affichage des noms
+            setInterval(showNextName, 3000);
+            
+            // Créer des éléments décoratifs initiaux
+            for (let i = 0; i < 20; i++) {
+                createConfetti();
+            }
+            
+            for (let i = 0; i < 10; i++) {
+                createBalloon();
+            }
+            
+            for (let i = 0; i < 15; i++) {
+                createStar();
+            }
+            
+            for (let i = 0; i < 12; i++) {
+                createHeart();
+            }
+            
+            // Continuer à ajouter des éléments décoratifs périodiquement
+            setInterval(createBalloon, 3000);
+            setInterval(createConfetti, 2000);
+            setInterval(createStar, 2500);
+            setInterval(createHeart, 3500);
+        } else {
+            // Si aucun nom n'est disponible
+            nameEl.textContent = "Merci à tous !";
+        }
     }
 });
