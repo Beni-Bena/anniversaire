@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merci pour vos vœux d'anniversaire !</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="thank-you-container">
+            <h1 class="thank-you-title">Merci !</h1>
+            <p class="thank-you-message">Un immense merci à tous ceux qui m'ont souhaité un joyeux anniversaire </p>
+            
+            <div class="names-wall">
+                <div class="names-scroller">
+                    {% for name in names %}
+                        <span class="name">{{ name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            <div class="hearts-container" id="hearts"></div>
+            <div class="confetti-container" id="confetti"></div>
+        </div>
+    </div>
+    
+</body>
+</html>
