@@ -10,7 +10,7 @@ def index(request):
         "Fideline Balibuno","Dr Luciane Sibi","Clareine Mulekera","Didier Ambunga","Cathia Abongi",
         "Lucie Kandolo","Jonathan Kanga","Bowa Mervedie","Cpa Redel","Jimmy Rais","Jed Milinganyo",
         "Emmanuel Kasongo","Junior Malu","Manasseh","Cp Abel","Dr Freud","Adjany ","Percide Bombale",
-        "Gloire Ashuza","Andy Binaki","Grace Ndungi","Joed Matumba"
+        "Gloire Ashuza","Andy Binaki","Grace Ndungi","Joed Matumba","Zouzou"
         ]
     liste *= 2
     return render(request, "index.html", {"names": liste})
