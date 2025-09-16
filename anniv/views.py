@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 def index(request):
-     liste = [
+    liste = [
         "Keren Siki","Sam Matia","Victoria Basemenane",
         "Christian Imani","Epaphras Makenene","Perside Lusakueno",
         "Melanie Masengu","Jr M'buyamba","Pascal Bunyori","Vainqueur Musangu",
